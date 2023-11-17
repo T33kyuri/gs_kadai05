@@ -1,0 +1,113 @@
+  <!DOCTYPE html>
+  <html lang="ja">
+
+  <head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Firebase_version9_RealtimeDB(G'sACADEMY初学者用サンプル)</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/style.css">
+  </head>
+
+  <body>
+
+  <h1>チャットアプリ</h1>
+  <!-- コンテンツ表示画面 -->
+  <div>
+      <!-- 各場所にidを設定しましょう -->
+      <div>
+          <input id="uname" type="text" placeholder="名前を入力してください">
+      </div>
+      <div>
+          <textarea id="text" placeholder="文章を入力してください"></textarea>
+      </div>
+      <button id="send">送信</button>
+      <!-- style.cssに "overflow: auto;"を書いてみましょう！※最後に -->
+      <div id="output"></div>
+  </div>
+
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-app.js";
+      import { getDatabase, ref, push, set, onChildAdded, remove, onChildRemoved }
+          from "https://www.gstatic.com/firebasejs/9.1.0/firebase-database.js";
+      // Your web app's Firebase configuration  < 個人別に違うため張り替え >
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app); //RealtimeDBに接続
+    const dbRef = ref(db, "chat"); //RealtimeDB内の"chat"を使う
+
+    //データ登録(Click)
+    $("#send").on("click", function(){
+        const uname = $("#uname").val();
+        const text = $("#text").val();
+
+        console.log(uname);
+        console.log(text);
+
+        // firebaseにデータを送るコードを記述
+        const msg = {
+            uname: uname,
+            text: text,
+            // date: date 日付の入力
+        }
+
+        // firebaseにデータを送る処理
+        // pushはfirebaseの仕様
+        const newPostRef = push(dbRef);
+        // setはfirebaseの仕様
+        set(newPostRef, msg);
+
+        // firebaseはローカルストレージと同様、時間の概念が無いため、
+        // 時系列順にするためには出力側（js）でコントロールが必要
+        
+
+        // 送信を推したら入力された文字を消す (val("")はルール上の決まり)
+        $("#uname").val("");
+        $("#text").val("");
+
+    });
+
+    //データ登録(Enter)
+
+    let aaa = 0 ;
+
+    //最初にデータ取得＆onSnapshotでリアルタイムにデータを取得
+    onChildAdded(dbRef, function(data){
+      const msg = data.val();
+      const key = data.key;
+      console.log(msg)
+
+      
+      let html  =`
+      <div class=${key}>
+        <p>${msg.uname}</p>
+        <p>${msg.text}</p>
+      </div>
+      `;
+      $("#output").append(html);      
+      // console.log(msg);
+      $("." + key).css('margin-top', '20px' );
+
+      let eee="." + key;
+      console.log(eee);
+      // let aaa = aaa + 1 ;
+      // console.log(aaa);
+
+      // $("." + key).css('background', 'pink' );
+      // $("." + key).appendTo('p').css('background', 'pink' );
+      // div:nth-child(odd) {
+      //   color: lime;
+      // }
+      // :nth-child(odd)
+
+    })
+
+
+  </script>
+  </body>
+
+  </html>
