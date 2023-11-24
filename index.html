@@ -75,13 +75,15 @@
 
     let aaa = 0 ;
 
+
     //最初にデータ取得＆onSnapshotでリアルタイムにデータを取得
     onChildAdded(dbRef, function(data){
       const msg = data.val();
       const key = data.key;
       console.log(msg)
 
-      
+      aaa = aaa +1; 
+
       let html  =`
       <div class=${key}>
         <p>${msg.uname}</p>
@@ -93,18 +95,26 @@
       $("." + key).css('margin-top', '20px' );
 
       let eee="." + key;
-      console.log(eee);
+      console.log(aaa);
       // let aaa = aaa + 1 ;
       // console.log(aaa);
 
-      // $("." + key).css('background', 'pink' );
-      // $("." + key).appendTo('p').css('background', 'pink' );
-      // div:nth-child(odd) {
-      //   color: lime;
-      // }
-      // :nth-child(odd)
+      if (aaa%2==0) {
+      $("." + key).css('background', 'pink' );
+      $("." + key).css('width', 'fit-content' );
+      $("." + key).css('padding', '10px' );
+      $("." + key).css('border-radius', '5px' );
+
+    }else{
+      $("." + key).css('background', 'greenyellow' );
+      $("." + key).css('margin-left', 'auto' );
+      $("." + key).css('width', 'fit-content' );
+      $("." + key).css('padding', '10px' );
+      $("." + key).css('border-radius', '5px' );
+    }
 
     })
+
 
 
   </script>
